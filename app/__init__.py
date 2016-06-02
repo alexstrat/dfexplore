@@ -1,13 +1,32 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from tornado import httpserver
+from tornado import gen
+import tornado.web
 
-app = Flask(__name__)
+# Sqlalchemy imports
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
-# Configurations
-app.config.from_object('config')
+import config
+import models
 
-# Define the database object which is imported
-# by modules and controllers
-db = SQLAlchemy(app)
+class BaseHandler(tornado.web.RequestHandler):
+    @property
+    def db(self):
+        return self.application.db
 
-db.create_all()
+class MainHandler(BaseHandler):
+    def get(self):
+        ws = self.db.query(models.Workspace).first()
+        self.write('Hello, world %s' % ws.name)
+
+
+class Application(tornado.web.Application):
+    def __init__(self):
+        handlers = [
+            (r"/?", MainHandler)
+        ]
+        tornado.web.Application.__init__(self, handlers)
+
+        engine = create_engine(config.SQLALCHEMY_DATABASE_URI, convert_unicode=True, echo=config.DEBUG)
+        models.init_db(engine)
+        self.db = scoped_session(sessionmaker(bind=engine))

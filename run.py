@@ -1,2 +1,6 @@
-from app import app
-app.run(host='0.0.0.0', port=8080, debug=True)
+from tornado.ioloop import IOLoop
+from app import Application
+
+app = Application()
+app.listen(8080)
+IOLoop.instance().start()
