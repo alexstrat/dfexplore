@@ -16,7 +16,12 @@ class DataframeHandler(BaseHandler):
             workspace_id,
             slug_name,
             self.request.body)
-        #self.write()
+
+        self.db_ee.emit('event', {
+            'type': 'update_or_create',
+            'workspace_id': workspace_id,
+            'slug_name': slug_name}
+        )
 
 class WorspaceDataframeHandler(BaseHandler):
     def get(self, workspace_id):
