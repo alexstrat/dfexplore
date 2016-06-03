@@ -1,0 +1,23 @@
+{
+  "name": "dfexplore",
+  "version": "0.0.0",
+  "authors": [
+    "Alexandre Lachèze <alexandre.lacheze@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/static/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.4"
+  }
+}
