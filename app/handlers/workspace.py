@@ -27,7 +27,7 @@ class WorkspaceHandler(BaseHandler):
         self.db.add(ws)
         self.db.commit()
 
-        self.write_json({'id': ws.id})
+        self.write_json({'id': ws.id, 'name': ws.name})
 
 default_handlers = [
     (r"/workspace/?", WorkspaceHandler),
