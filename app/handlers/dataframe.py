@@ -31,6 +31,6 @@ class WorspaceDataframeHandler(BaseHandler):
         self.write_json(response)
 
 default_handlers = [
-    (r"/workspace/([0-9]+)/dataframe", WorspaceDataframeHandler),
+    (r"/workspace/([0-9]+)/dataframe/?", WorspaceDataframeHandler),
     (r"/workspace/([0-9]+)/dataframe/([a-zA-Z_][a-zA-Z0-9_]*)", DataframeHandler)
 ]
