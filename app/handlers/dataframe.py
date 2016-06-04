@@ -8,8 +8,8 @@ class DataframeHandler(BaseHandler):
             .filter(DataFrame.slug_name == slug_name) \
             .first()
         df = dataframe.get_pd_dataframe()
-        self.set_header('Content-Type', 'text/csv')
-        self.write(df.to_csv())
+        self.set_header('Content-Type', 'application/json')
+        self.write(df.to_json(orient='records'))
 
     def post(self, workspace_id, slug_name):
         DataFrame.update_or_create(self.db,
