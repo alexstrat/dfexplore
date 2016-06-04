@@ -6,10 +6,17 @@ from tornado.ioloop import PeriodicCallback
 # Sqlalchemy imports
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from pyee import EventEmitter
+import pyee
 
 import config
 import handlers as app_handlers
+
+
+
+class EventEmitter(pyee.EventEmitter):
+    def emit(self, event, *args, **kwargs):
+        super(EventEmitter, self).emit(event, *args, **kwargs)
+        super(EventEmitter, self).emit('*', event, *args, **kwargs)
 
 
 TEMPLATE_PATH = os.path.join(config.BASE_DIR, 'app/templates')
@@ -26,5 +33,5 @@ class Application(tornado.web.Application):
         self.db_ee = EventEmitter()
 
         # test
-        heartbeat = PeriodicCallback(lambda: self.db_ee.emit('event', {'type': 'heartbeat'}), 1000.)
+        heartbeat = PeriodicCallback(lambda: self.db_ee.emit('heartbeat'), 1000.)
         heartbeat.start()

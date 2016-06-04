@@ -17,8 +17,7 @@ class DataframeHandler(BaseHandler):
             slug_name,
             self.request.body)
 
-        self.db_ee.emit('event', {
-            'type': 'update_or_create',
+        self.db_ee.emit('update_or_create', {
             'workspace_id': workspace_id,
             'slug_name': slug_name}
         )
