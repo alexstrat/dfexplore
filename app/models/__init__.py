@@ -25,7 +25,7 @@ class DataFrame(Base):
     __tablename__ = 'data_frame'
 
     workspace_id = Column(Integer, ForeignKey('workspace.id'), primary_key=True)
-    slug_name = Column(String(120), unique=True, nullable=False, primary_key=True)
+    slug_name = Column(String(120), nullable=False, primary_key=True)
     data_path = Column(String(120), unique=True)
 
     def get_pd_dataframe(self):
