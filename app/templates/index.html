@@ -18,22 +18,36 @@
 Hello
 
 <script>
-    $.getJSON('/workspace/1/dataframe/Sacramentorealestatetransactions')
-    .then(function(data) {
-        window.tableData = data;
-
+    window.tableData = []
+    var hot;
+    $(function() {
         var container = document.getElementById('hot');
-        var hot = new Handsontable(container,{
+        hot = new Handsontable(container, {
             data: window.tableData,
-            colHeaders: Object.keys(window.tableData[0]),
             readOnly: true,
         });
     });
+    var updateTableData= function() {
+        $.getJSON('/workspace/1/dataframe/Sacramentorealestatetransactions')
+        .then(function(data) {
+            window.tableData = data;
+            hot.loadData(data);
+            hot.updateSettings({
+                colHeaders: Object.keys(window.tableData[0])
+            });
+            hot.render()
+        });
+    }
+    updateTableData()
 
     var sse = $.SSE('/events', {
-        onMessage: function(msg) {
-            //var event = JSON.parse(msg)
-            console.log(msg);
+        events: {
+            'heartbeat': function(ev) {
+                //console.log(ev);
+            },
+            'update_or_create': function(evt) {
+                updateTableData()
+            }
         }
     });
     window.sse = sse;
