@@ -1,3 +1,5 @@
+import tornado.web
+
 from base import BaseHandler
 from ..models import DataFrame
 
@@ -7,6 +9,8 @@ class DataframeHandler(BaseHandler):
             .filter(DataFrame.workspace_id == workspace_id) \
             .filter(DataFrame.slug_name == slug_name) \
             .first()
+        if not dataframe:
+            raise tornado.web.HTTPError(404, 'missing name in body')
         df = dataframe.get_pd_dataframe()
         self.set_header('Content-Type', 'application/json')
         self.write(df.to_json(orient='records'))
