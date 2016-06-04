@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+    <script src="/components/jquery/dist/jquery.js"></script>
+    <script src="/components/jquery-sse/jquery.sse.js"></script>
+    <script src="/components/handsontable/dist/handsontable.full.js"></script>
+    <link rel="stylesheet" media="screen" href="/components/handsontable/dist/handsontable.full.css">
+    <style>
+        .handsontable {
+            font-size: 13px;
+            font-family: Verdana, Helvetica, Arial, FreeSans, sans-serif;
+        }
+    </style>
+</head>
+<body>
+Hello
+
+<script>
+    $.getJSON('/workspace/1/dataframe/Sacramentorealestatetransactions')
+    .then(function(data) {
+        window.tableData = data;
+
+        var container = document.getElementById('hot');
+        var hot = new Handsontable(container,{
+            data: window.tableData,
+            colHeaders: Object.keys(window.tableData[0]),
+            readOnly: true,
+        });
+    });
+
+    var sse = $.SSE('/events', {
+        onMessage: function(msg) {
+            //var event = JSON.parse(msg)
+            console.log(msg);
+        }
+    });
+    window.sse = sse;
+    sse.start()
+    sse.onMessage
+</script>
+
+<div id="hot"></div>
+</body>
+</html>

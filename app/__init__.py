@@ -1,3 +1,5 @@
+import os
+
 import tornado.web
 from tornado.ioloop import PeriodicCallback
 
@@ -10,11 +12,13 @@ import config
 import handlers as app_handlers
 
 
+TEMPLATE_PATH = os.path.join(config.BASE_DIR, 'app/templates')
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = app_handlers.get_all()
 
-        tornado.web.Application.__init__(self, handlers)
+        tornado.web.Application.__init__(self, handlers, template_path=TEMPLATE_PATH)
 
         engine = create_engine(config.SQLALCHEMY_DATABASE_URI, convert_unicode=True, echo=config.DEBUG)
         models.init_db(engine)
