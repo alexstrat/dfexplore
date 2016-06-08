@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dfexplore">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+    <script src="/components/jquery/dist/jquery.js"></script>
+    <script src="/components/jquery-sse/jquery.sse.js"></script>
+    <script src="/components/handsontable/dist/handsontable.full.js"></script>
+    <script src="/components/angular/angular.js"></script>
+    <script src="/components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script src="/components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <link rel="stylesheet" href="/components/angular-bootstrap/ui-bootstrap-csp.css">
+    <script src="/components/ngHandsontable/dist/ngHandsontable.js"></script>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" media="screen" href="/components/handsontable/dist/handsontable.full.css">
+    <style>
+        .handsontable {
+            font-size: 13px;
+            font-family: Verdana, Helvetica, Arial, FreeSans, sans-serif;
+        }
+    </style>
+    <script>
+    angular
+        .module('dfexplore', ['ui.bootstrap', 'ngHandsontable'])
+        .component('dataframe', {
+            template: '<hot-table hot-id="{{$ctrl.dataframe.slug_name}}" col-headers="true" datarows="$ctrl.data"></hot-table>',
+            bindings: {
+                dataframe: '='
+            },
+            controller: function DataframeController($http) {
+                var self = this;
+                $http.get('/workspace/1/dataframe/'+self.dataframe.slug_name)
+                    .then(function(response) {
+                        self.data = response.data;
+                    })
+
+            }
+        })
+        .controller('WorkspaceController', function ($scope, $http, hotRegisterer) {
+            $http.get('/workspace/1/dataframe/').then(function(response) {
+                $scope.dataframes = response.data;
+            });
+            $scope.resize = function(df) {
+                var hot = hotRegisterer.getInstance(df.slug_name)
+                if(hot) {
+                    setTimeout(function() {
+                        hot.render()
+                    }, 0);
+                }
+            }
+        })
+</script>
+</head>
+<body>
+
+<div ng-controller="WorkspaceController">
+  <uib-tabset active="active">
+    <uib-tab ng-repeat="df in dataframes" heading="{{df.slug_name}}" select="resize(df)">
+        <dataframe dataframe="df"></dataframe>
+    </uib-tab>
+  </uib-tabset>
+</div>
+
+<!-- <script>
+    window.tableData = []
+    var hot;
+
+    $(function() {
+        var container = document.getElementById('hot');
+        hot = new Handsontable(container, {
+            data: window.tableData,
+            readOnly: true,
+        });
+    });
+    var updateTableData= function() {
+        $.getJSON('/workspace/1/dataframe/TechCrunchcontinentalUSA')
+        .then(function(data) {
+            window.tableData = data;
+            hot.loadData(data);
+            hot.updateSettings({
+                colHeaders: Object.keys(window.tableData[0])
+            });
+            hot.render()
+        });
+    }
+    updateTableData()
+
+    var sse = $.SSE('/events', {
+        events: {
+            'heartbeat': function(ev) {
+                //console.log(ev);
+            },
+            'update_or_create': function(evt) {
+                updateTableData()
+            }
+        }
+    });
+    window.sse = sse;
+    sse.start()
+    sse.onMessage
+</script>
+ -->
+<div id="hot"></div>
+</body>
+</html>
